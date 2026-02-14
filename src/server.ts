@@ -17,6 +17,7 @@ const startServer = async () => {
 
         server = app.listen(envVars.PORT, () => {
             console.log(`Server is listening to port ${envVars.PORT}`);
+            console.log(`http://localhost:${envVars.PORT}/`);
         });
     } catch (error) {
         console.log(error);

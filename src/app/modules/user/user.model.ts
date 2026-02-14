@@ -30,8 +30,6 @@ const userSchema = new Schema<IUser>({
     },
     isVerified: { type: Boolean, default: false },
     auths: [authProviderSchema],
-    storageUsed: { type: Number, default: 0 }, 
-  storageLimit: { type: Number, default: 15 * 1024 * 1024 * 1024 },
 }, {
     timestamps: true,
     versionKey: false
