@@ -6,7 +6,7 @@ const PlanSchema: Schema = new Schema<IPlan>(
     planName: { type: String, required: true },
     amount: { type: Number, required: true },
     currency: { type: String },
-    interval: { type: String, enum: ["day", "week", "month", "year"], default: "month" },
+    interval: { type: String, enum: ["day", "week", "month", "year", "lifetime"], default: "month" },
     intervalCount: { type: Number, required: true },
     freeTrialDays: { type: Number },
     productId: { type: String },
