@@ -13,6 +13,7 @@ const createPlan = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const updatePlan = catchAsync(async (req, res) => {
 
   const result = await PlanServices.updatePlan(req.params.planId, req.body);
@@ -34,7 +35,6 @@ const getAllPlans = catchAsync(async (req, res) => {
   });
 });
 
-
 const getPlanById = catchAsync(async (req, res) => {
   const result = await PlanServices.getPlanById(req.params.planId);
   sendResponse(res, {
@@ -44,7 +44,6 @@ const getPlanById = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
 
 const deletePlan = catchAsync(async (req, res) => {
   const result = await PlanServices.deletePlan(req.params.planId);

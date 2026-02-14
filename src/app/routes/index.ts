@@ -3,6 +3,7 @@ import { UserRoutes } from "../modules/user/user.routes"
 import { AuthRoutes } from "../modules/auth/auth.routes"
 import { OtpRoutes } from "../modules/otp/otp.routes"
 import { PlanRoutes } from "../modules/Plan/Plan.route"
+import { SubscriptionRoutes } from "../modules/subscription/subscription.routes"
 
 
 export const router = Router()
@@ -19,6 +20,10 @@ const moduleRoutes = [
     {
         path: "/plan",
         route: PlanRoutes
+    },
+    {
+        path: "/subscription",
+        route: SubscriptionRoutes
     },
     
 

@@ -1,12 +1,12 @@
 import mongoose, { Schema } from "mongoose";
-import { IPlan } from "./plan.interface";
+import { Interval, IPlan } from "./plan.interface";
 
 const PlanSchema: Schema = new Schema<IPlan>(
   {
     planName: { type: String, required: true },
     amount: { type: Number, required: true },
     currency: { type: String },
-    interval: { type: String, enum: ["day", "week", "month", "year", "lifetime"], default: "month" },
+    interval: { type: String, enum: Interval, default: Interval.MONTH },
     intervalCount: { type: Number, required: true },
     freeTrialDays: { type: Number },
     productId: { type: String },

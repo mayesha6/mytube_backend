@@ -1,10 +1,18 @@
 import { Document } from "mongoose";
 
+export enum Interval {
+  DAY = "day",
+  WEEK = "week",
+  MONTH = "month",
+  YEAR = "year",
+  LIFETIME = "lifetime",
+}
+
 export interface IPlan extends Document {
   planName: string;
   amount: number;
   currency?: string;
-  interval: "day" | "week" | "month" | "year" | "lifetime";
+  interval: Interval;
   intervalCount: number;
   freeTrialDays?: number;
   productId?: string;
