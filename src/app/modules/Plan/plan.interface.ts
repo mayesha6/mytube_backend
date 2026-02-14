@@ -4,7 +4,7 @@ export interface IPlan extends Document {
   planName: string;
   amount: number;
   currency?: string;
-  interval: "day" | "week" | "month" | "year";
+  interval: "day" | "week" | "month" | "year" | "lifetime";
   intervalCount: number;
   freeTrialDays?: number;
   productId?: string;

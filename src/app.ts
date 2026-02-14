@@ -8,7 +8,6 @@ import "./app/config/passport";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import { router } from "./app/routes";
-import { SubscriptionRoutes } from "./app/modules/subscription/subscription.routes";
 
 const app = express()
 
@@ -28,7 +27,6 @@ app.use(cors({
     origin: envVars.FRONTEND_URL,
     credentials: true
 }))
-app.use("/api/subscription", SubscriptionRoutes);
 app.use("/api/v1", router)
 
 app.get("/", (req: Request, res: Response) => {
