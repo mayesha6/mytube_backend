@@ -30,6 +30,7 @@ const userSchema = new Schema<IUser>({
     },
     isVerified: { type: Boolean, default: false },
     auths: [authProviderSchema],
+    stripeCustomerId: { type: String },
 }, {
     timestamps: true,
     versionKey: false

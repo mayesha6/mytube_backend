@@ -30,7 +30,6 @@ export interface IUser {
   isVerified?: boolean;
   role: Role;
   auths: IAuthProvider[];
-  storageUsed: number;
-  storageLimit: number;
+  stripeCustomerId: string;
   createdAt?: Date;
 }
