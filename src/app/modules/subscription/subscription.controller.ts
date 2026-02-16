@@ -4,20 +4,39 @@ import { sendResponse } from "../../utils/sendResponse";
 import { SubscriptionServices } from "./subscription.services";
 
 
+// const createSubscription = catchAsync(async (req, res) => {
+//     const userId = req?.user?.userId as string;
+//     const { planId } = req.body;
+//     console.log("createSubscription - planId:", req.body);
+//     const result = await SubscriptionServices.createSubscription(userId, planId);
+
+//     sendResponse(res, {
+//         success: true,
+//         statusCode: status.CREATED,
+//         message: "Subscription Created successfully.",
+//         data: result,
+//     });
+// });
+
+
 const createSubscription = catchAsync(async (req, res) => {
-    const userId = req?.user?.userId as string;
-    const { planId } = req.body;
-    console.log("createSubscription - planId:", req.body);
-    const result = await SubscriptionServices.createSubscription(userId, planId);
+//   const userId = req?.user?.userId; // JWT userId
+   const {userId} = req.user as {userId: string}; 
+  const { planId } = req.body;
 
-    sendResponse(res, {
-        success: true,
-        statusCode: status.CREATED,
-        message: "Subscription Created successfully.",
-        data: result,
-    });
+  console.log("createSubscription - planId:", planId);
+  console.log("createSubscription - userId:", userId);
+  console.log("createSubscription - user:", req.user);
+
+  const result = await SubscriptionServices.createSubscription(userId, planId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: status.CREATED,
+    message: "Subscription Created successfully.",
+    data: result,
+  });
 });
-
 const getAllSubscription = catchAsync(async (req, res) => {
     const results = await SubscriptionServices.getAllSubscription();
     sendResponse(res, {

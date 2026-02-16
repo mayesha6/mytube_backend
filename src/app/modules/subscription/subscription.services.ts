@@ -10,12 +10,92 @@ import { Interval } from "../Plan/plan.interface";
 import { stripe } from "../../config/stripe";
 import { PaymentStatus } from "./subscription.interface";
 
+// const createSubscription = async (userId: string, planId: string) => {
+//   console.log("createSubscription - userId:", userId);
+
+//   const user = await User.findById(userId);
+//   if (!user) throw new AppError(status.NOT_FOUND, "User not found");
+
+//   const plan = await Plan.findById(planId);
+//   if (!plan) throw new AppError(status.NOT_FOUND, "Plan not found");
+
+//   const isLifetimePlan =
+//     plan.planName.toUpperCase().includes("LIFETIME") ||
+//     plan.interval === Interval.LIFETIME;
+
+//   const startDate = new Date();
+//   let endDate: Date | null = null;
+
+//   if (!isLifetimePlan) {
+//     if (plan.interval === Interval.MONTH) {
+//       endDate = new Date(startDate);
+//       endDate.setMonth(endDate.getMonth() + (plan.intervalCount || 1));
+//     } else if (plan.interval === Interval.YEAR) {
+//       endDate = new Date(startDate);
+//       endDate.setFullYear(endDate.getFullYear() + (plan.intervalCount || 1));
+//     }
+//   }
+
+//   // 💳 Create PaymentIntent
+//   const paymentIntent = await stripe.paymentIntents.create({
+//     amount: Math.round(plan.amount * 100),
+//     currency: "usd",
+//     metadata: {
+//       userId: user._id.toString(),
+//       planId: plan._id.toString(),
+//       planType: isLifetimePlan ? "lifetime" : "subscription",
+//     },
+//     automatic_payment_methods: { enabled: true },
+//   });
+
+//   // Check existing pending subscription
+//   const existingSubscription = await Subscription.findOne({
+//     userId: user._id,
+//   });
+
+//   let subscription;
+
+//   if (existingSubscription?.paymentStatus === PaymentStatus.PENDING) {
+//     subscription = await Subscription.findByIdAndUpdate(
+//       existingSubscription._id,
+//       {
+//         planId: plan._id,
+//         stripePaymentId: paymentIntent.id,
+//         startDate,
+//         amount: plan.amount,
+//         ...(endDate ? { endDate } : {}),
+//         paymentStatus: PaymentStatus.PENDING,
+//       },
+//       { new: true }
+//     );
+//   } else {
+//     subscription = await Subscription.create({
+//       userId: user._id,
+//       planId: plan._id,
+//       startDate,
+//       ...(endDate ? { endDate } : {}),
+//       amount: plan.amount,
+//       stripePaymentId: paymentIntent.id,
+//       paymentStatus: PaymentStatus.PENDING,
+//     });
+//   }
+
+//   return {
+//     subscription,
+//     clientSecret: paymentIntent.client_secret,
+//     paymentIntentId: paymentIntent.id,
+//     planType: isLifetimePlan ? Interval.LIFETIME : "subscription",
+//   };
+// };
+
 const createSubscription = async (userId: string, planId: string) => {
   console.log("createSubscription - userId:", userId);
 
+  // Fetch user
   const user = await User.findById(userId);
   if (!user) throw new AppError(status.NOT_FOUND, "User not found");
 
+  // Fetch plan
   const plan = await Plan.findById(planId);
   if (!plan) throw new AppError(status.NOT_FOUND, "Plan not found");
 
@@ -24,7 +104,7 @@ const createSubscription = async (userId: string, planId: string) => {
     plan.interval === Interval.LIFETIME;
 
   const startDate = new Date();
-  let endDate: Date | null = null;
+  let endDate: Date | undefined;
 
   if (!isLifetimePlan) {
     if (plan.interval === Interval.MONTH) {
@@ -36,10 +116,10 @@ const createSubscription = async (userId: string, planId: string) => {
     }
   }
 
-  // 💳 Create PaymentIntent
+  // Create Stripe PaymentIntent
   const paymentIntent = await stripe.paymentIntents.create({
     amount: Math.round(plan.amount * 100),
-    currency: "usd",
+    currency: plan.currency || "usd",
     metadata: {
       userId: user._id.toString(),
       planId: plan._id.toString(),
@@ -49,9 +129,7 @@ const createSubscription = async (userId: string, planId: string) => {
   });
 
   // Check existing pending subscription
-  const existingSubscription = await Subscription.findOne({
-    userId: user._id,
-  });
+  const existingSubscription = await Subscription.findOne({ userId: user._id });
 
   let subscription;
 

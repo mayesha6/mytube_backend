@@ -28,8 +28,7 @@ export const seedSuperAdmin = async () => {
             password: hashedPassword,
             isVerified: true,
             auths: [authProvider],
-            storageUsed: 0,
-            storageLimit: 0
+            stripeCustomerId: "",
         }
 
         const superadmin = await User.create(payload)
