@@ -15,15 +15,15 @@ router.post(
 
 router.get(
   "/my-subscription",
-  checkAuth(),
+  checkAuth("USER"),
   SubscriptionController.getMySubscription
 );
 
-router.get("/", checkAuth(), SubscriptionController.getAllSubscription);
+router.get("/", checkAuth("ADMIN"), SubscriptionController.getAllSubscription);
 
 router.get(
   "/:subscriptionId",
-  checkAuth(),
+  checkAuth("ADMIN"),
   SubscriptionController.getSingleSubscription
 );
 
@@ -39,6 +39,5 @@ router.delete(
   SubscriptionController.deleteSubscription
 );
 
-router.post("/stripe/webhook", SubscriptionController.handleStripeWebhook);
 
 export const SubscriptionRoutes = router;

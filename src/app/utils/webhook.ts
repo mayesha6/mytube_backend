@@ -4,6 +4,7 @@ import AppError from "../errorHelpers/AppError";
 import { Interval } from "../modules/Plan/plan.interface";
 import { Subscription } from "../modules/subscription/subscription.model";
 import { User } from "../modules/user/user.model";
+import { Types } from "mongoose";
 
 
 const calculateEndDate = (
@@ -105,5 +106,30 @@ const handlePaymentIntentFailed = async (
   });
 };
 
+const handleLifetimePaymentSuccess = async (
+  session: Stripe.Checkout.Session
+) => {
+  const { userId, planId } = session.metadata!;
 
-export { handlePaymentIntentSucceeded, handlePaymentIntentFailed };
+  await Subscription.updateMany(
+    {
+      userId: new Types.ObjectId(userId),
+      planId: new Types.ObjectId(planId),
+      paymentStatus: "PENDING",
+    },
+    {
+      paymentStatus: "COMPLETED",
+      stripePaymentId: session.payment_intent as string,
+    }
+  );
+
+  await User.findByIdAndUpdate(userId, {
+    isSubscribed: true,
+    planExpiration: null,
+  });
+
+  console.log("✅ Lifetime payment completed:", userId);
+};
+
+
+export { handlePaymentIntentSucceeded, handlePaymentIntentFailed, handleLifetimePaymentSuccess };

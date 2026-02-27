@@ -8,10 +8,11 @@ import "./app/config/passport";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import { router } from "./app/routes";
+import { PaymentController } from "./app/modules/webhook/webhook.controller";
 
 const app = express()
 
-
+router.post("/stripe/webhook", PaymentController.handleStripeWebhook);
 app.use(expressSession({
     secret: envVars.EXPRESS_SESSION_SECRET,
     resave: false,

@@ -44,6 +44,36 @@ export const uploadBufferToCloudinary = async (
   }
 };
 
+export const uploadVideoToCloudinary = async (
+  buffer: Buffer,
+  fileName: string
+): Promise<UploadApiResponse | undefined> => {
+  try {
+    return new Promise((resolve, reject) => {
+      const public_id = `videos/${fileName}-${Date.now()}`;
+
+      const bufferStream = new stream.PassThrough();
+      bufferStream.end(buffer);
+
+      cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "video", // 🔥 important
+            public_id,
+            folder: "videos",
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        )
+        .end(buffer);
+    });
+  } catch (error: any) {
+    throw new AppError(500, `Video upload failed: ${error.message}`);
+  }
+};
+
 export const deleteImageFromCLoudinary = async (url: string) => {
   try {
     const regex = /\/v\d+\/(.*?)\.(jpg|jpeg|png|gif|webp)$/i;
@@ -59,6 +89,22 @@ export const deleteImageFromCLoudinary = async (url: string) => {
     }
   } catch (error: any) {
     throw new AppError(401, "Cloudinary image deletion failed", error.message);
+  }
+};
+
+export const deleteVideoFromCloudinary = async (url: string) => {
+  try {
+    // Cloudinary public_id extract
+    const regex = /\/videos\/(.*?)$/;
+    const match = url.match(regex);
+
+    if (match && match[1]) {
+      const public_id = `videos/${match[1].split('.')[0]}`;
+      await cloudinary.uploader.destroy(public_id, { resource_type: "video" });
+      console.log(`Video ${public_id} deleted from Cloudinary`);
+    }
+  } catch (error: any) {
+    throw new AppError(500, "Cloudinary video deletion failed", error.message);
   }
 };
 
