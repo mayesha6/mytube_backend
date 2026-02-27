@@ -2,31 +2,11 @@ import status from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { SubscriptionServices } from "./subscription.services";
+import { Request, Response } from "express";
 
-
-// const createSubscription = catchAsync(async (req, res) => {
-//     const userId = req?.user?.userId as string;
-//     const { planId } = req.body;
-//     console.log("createSubscription - planId:", req.body);
-//     const result = await SubscriptionServices.createSubscription(userId, planId);
-
-//     sendResponse(res, {
-//         success: true,
-//         statusCode: status.CREATED,
-//         message: "Subscription Created successfully.",
-//         data: result,
-//     });
-// });
-
-
-const createSubscription = catchAsync(async (req, res) => {
-//   const userId = req?.user?.userId; // JWT userId
+const createSubscription = catchAsync(async (req:Request, res:Response) => {
    const {userId} = req.user as {userId: string}; 
   const { planId } = req.body;
-
-  console.log("createSubscription - planId:", planId);
-  console.log("createSubscription - userId:", userId);
-  console.log("createSubscription - user:", req.user);
 
   const result = await SubscriptionServices.createSubscription(userId, planId);
 
@@ -37,6 +17,7 @@ const createSubscription = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const getAllSubscription = catchAsync(async (req, res) => {
     const results = await SubscriptionServices.getAllSubscription();
     sendResponse(res, {
@@ -100,22 +81,13 @@ const deleteSubscription = catchAsync(async (req, res) => {
     });
 });
 
-const handleStripeWebhook = catchAsync(async (req, res) => {
-    const result = await SubscriptionServices.HandleStripeWebhook(req.body);
 
-    sendResponse(res, {
-        success: true,
-        statusCode: status.OK,
-        message: "Webhook event trigger successfully",
-        data: result,
-    });
-});
+
 
 export const SubscriptionController = {
     createSubscription,
     getAllSubscription,
     getMySubscription,
-    handleStripeWebhook,
     getSingleSubscription,
     updateSubscription,
     deleteSubscription,
